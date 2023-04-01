@@ -2,17 +2,20 @@ import axios from 'axios';
 import { useState } from 'react';
 import { Categories } from './types';
 import CategorisedView from './CategorisedView';
+import BarLoader from "react-spinners/BarLoader";
 
-const baseUrl = 'http://localhost:8099/';
+const baseUrl = 'https://my-yamnet-pjv64acrga-uc.a.run.app/';
 
 const MainView = () => {
 
     const [categories, setCategories] = useState<Categories | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
 
     const callApi = async (base64: string) => {
         setError(null);
         setCategories(null);
+        setLoading(true);
         try {
             const res = await axios({
                 method: 'post',
@@ -30,6 +33,7 @@ const MainView = () => {
         } catch (e) {
             setError('Error getting response from server');
         }
+        setLoading(false);
     }
 
     return (
@@ -42,6 +46,8 @@ const MainView = () => {
                 reader.onerror = (evt) => setError("Could not read file");                
                 reader.readAsDataURL(file);
             }}/>
+
+            {loading && <div style={{marginTop: 20}}><BarLoader/></div>}
 
             {error && <div>{error}</div>}
 
